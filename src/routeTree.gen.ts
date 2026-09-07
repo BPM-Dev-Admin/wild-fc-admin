@@ -14,8 +14,8 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as TransactionsRouteImport } from './routes/transactions'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as SettingsLimitsRouteImport } from './routes/settings.limits'
-import { Route as FormsContactIndexRouteImport } from './routes/forms.contact.index'
-import { Route as FormsContactSubmissionIdRouteImport } from './routes/forms.contact.$submissionId'
+import { Route as FormsMembershipUpdatesIndexRouteImport } from './routes/forms.membership-updates.index'
+import { Route as FormsMembershipUpdatesSubmissionIdRouteImport } from './routes/forms.membership-updates.$submissionId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -42,15 +42,16 @@ const SettingsLimitsRoute = SettingsLimitsRouteImport.update({
   path: '/settings/limits',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FormsContactIndexRoute = FormsContactIndexRouteImport.update({
-  id: '/forms/contact/',
-  path: '/forms/contact/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FormsContactSubmissionIdRoute =
-  FormsContactSubmissionIdRouteImport.update({
-    id: '/forms/contact/$submissionId',
-    path: '/forms/contact/$submissionId',
+const FormsMembershipUpdatesIndexRoute =
+  FormsMembershipUpdatesIndexRouteImport.update({
+    id: '/forms/membership-updates/',
+    path: '/forms/membership-updates/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const FormsMembershipUpdatesSubmissionIdRoute =
+  FormsMembershipUpdatesSubmissionIdRouteImport.update({
+    id: '/forms/membership-updates/$submissionId',
+    path: '/forms/membership-updates/$submissionId',
     getParentRoute: () => rootRouteImport,
   } as any)
 
@@ -60,8 +61,8 @@ export interface FileRoutesByFullPath {
   '/transactions': typeof TransactionsRoute
   '/settings/limits': typeof SettingsLimitsRoute
   '/settings/': typeof SettingsIndexRoute
-  '/forms/contact/$submissionId': typeof FormsContactSubmissionIdRoute
-  '/forms/contact/': typeof FormsContactIndexRoute
+  '/forms/membership-updates/$submissionId': typeof FormsMembershipUpdatesSubmissionIdRoute
+  '/forms/membership-updates/': typeof FormsMembershipUpdatesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -69,8 +70,8 @@ export interface FileRoutesByTo {
   '/transactions': typeof TransactionsRoute
   '/settings/limits': typeof SettingsLimitsRoute
   '/settings': typeof SettingsIndexRoute
-  '/forms/contact/$submissionId': typeof FormsContactSubmissionIdRoute
-  '/forms/contact': typeof FormsContactIndexRoute
+  '/forms/membership-updates/$submissionId': typeof FormsMembershipUpdatesSubmissionIdRoute
+  '/forms/membership-updates': typeof FormsMembershipUpdatesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -79,8 +80,8 @@ export interface FileRoutesById {
   '/transactions': typeof TransactionsRoute
   '/settings/limits': typeof SettingsLimitsRoute
   '/settings/': typeof SettingsIndexRoute
-  '/forms/contact/$submissionId': typeof FormsContactSubmissionIdRoute
-  '/forms/contact/': typeof FormsContactIndexRoute
+  '/forms/membership-updates/$submissionId': typeof FormsMembershipUpdatesSubmissionIdRoute
+  '/forms/membership-updates/': typeof FormsMembershipUpdatesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -90,8 +91,8 @@ export interface FileRouteTypes {
     | '/transactions'
     | '/settings/limits'
     | '/settings/'
-    | '/forms/contact/$submissionId'
-    | '/forms/contact/'
+    | '/forms/membership-updates/$submissionId'
+    | '/forms/membership-updates/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -99,8 +100,8 @@ export interface FileRouteTypes {
     | '/transactions'
     | '/settings/limits'
     | '/settings'
-    | '/forms/contact/$submissionId'
-    | '/forms/contact'
+    | '/forms/membership-updates/$submissionId'
+    | '/forms/membership-updates'
   id:
     | '__root__'
     | '/'
@@ -108,8 +109,8 @@ export interface FileRouteTypes {
     | '/transactions'
     | '/settings/limits'
     | '/settings/'
-    | '/forms/contact/$submissionId'
-    | '/forms/contact/'
+    | '/forms/membership-updates/$submissionId'
+    | '/forms/membership-updates/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -118,8 +119,8 @@ export interface RootRouteChildren {
   TransactionsRoute: typeof TransactionsRoute
   SettingsLimitsRoute: typeof SettingsLimitsRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
-  FormsContactSubmissionIdRoute: typeof FormsContactSubmissionIdRoute
-  FormsContactIndexRoute: typeof FormsContactIndexRoute
+  FormsMembershipUpdatesSubmissionIdRoute: typeof FormsMembershipUpdatesSubmissionIdRoute
+  FormsMembershipUpdatesIndexRoute: typeof FormsMembershipUpdatesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -159,18 +160,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsLimitsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/forms/contact/': {
-      id: '/forms/contact/'
-      path: '/forms/contact'
-      fullPath: '/forms/contact/'
-      preLoaderRoute: typeof FormsContactIndexRouteImport
+    '/forms/membership-updates/': {
+      id: '/forms/membership-updates/'
+      path: '/forms/membership-updates'
+      fullPath: '/forms/membership-updates/'
+      preLoaderRoute: typeof FormsMembershipUpdatesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/forms/contact/$submissionId': {
-      id: '/forms/contact/$submissionId'
-      path: '/forms/contact/$submissionId'
-      fullPath: '/forms/contact/$submissionId'
-      preLoaderRoute: typeof FormsContactSubmissionIdRouteImport
+    '/forms/membership-updates/$submissionId': {
+      id: '/forms/membership-updates/$submissionId'
+      path: '/forms/membership-updates/$submissionId'
+      fullPath: '/forms/membership-updates/$submissionId'
+      preLoaderRoute: typeof FormsMembershipUpdatesSubmissionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -182,8 +183,9 @@ const rootRouteChildren: RootRouteChildren = {
   TransactionsRoute: TransactionsRoute,
   SettingsLimitsRoute: SettingsLimitsRoute,
   SettingsIndexRoute: SettingsIndexRoute,
-  FormsContactSubmissionIdRoute: FormsContactSubmissionIdRoute,
-  FormsContactIndexRoute: FormsContactIndexRoute,
+  FormsMembershipUpdatesSubmissionIdRoute:
+    FormsMembershipUpdatesSubmissionIdRoute,
+  FormsMembershipUpdatesIndexRoute: FormsMembershipUpdatesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

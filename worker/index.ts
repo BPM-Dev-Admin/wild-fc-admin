@@ -1,26 +1,43 @@
 const PAGE_SIZE = 10
 const MAX_SEARCH_LENGTH = 100
+const MEMBERSHIP_FORM_ID = "season-ticket-membership-update"
 
-type ContactListRow = {
+type MembershipUpdateListRow = {
   id: string
   submitted_at: string
-  first_name: string
-  last_name: string
+  full_name: string
   email: string
-  topic: string
-  email_status: string
-  sync_status: string | null
+  stm_number: string | null
+  help_topics: string
+  notification_status: string
 }
 
-type ContactDetailRow = ContactListRow & {
-  message: string
-  newsletter_opt_in: number
-  email_provider: string
-  email_message_id: string | null
-  email_error: string | null
-  sync_provider: string | null
-  sync_external_id: string | null
-  sync_error: string | null
+type MembershipUpdateDetailRow = MembershipUpdateListRow & {
+  phone: string
+  updated_email: string | null
+  updated_phone: string | null
+  updated_mailing_address: string | null
+  current_seat_count: number | null
+  requested_seat_count: number | null
+  seat_location_first_choice: string | null
+  seat_location_second_choice: string | null
+  seat_location_third_choice: string | null
+  parking_action: string | null
+  new_account_holder_name: string | null
+  new_account_holder_phone: string | null
+  new_account_holder_email: string | null
+  new_account_holder_mailing_address: string | null
+  tickets_to_transfer: number | null
+  payment_plan_action: string | null
+  credit_card_action: string | null
+  cancellation_reasons: string
+  cancellation_options: string
+  considering_cancellation_contact_method: string | null
+  cancellation_contact_method: string | null
+  cancellation_request_acknowledged: number
+  cancellation_written_confirmation_acknowledged: number
+  notes: string | null
+  notification_error: string | null
   protection_status: string
 }
 
@@ -44,43 +61,55 @@ function escapeLike(value: string) {
   return value.replaceAll("\\", "\\\\").replaceAll("%", "\\%").replaceAll("_", "\\_")
 }
 
-async function listContactSubmissions(request: Request, env: CloudflareBindings) {
+async function listMembershipUpdates(
+  request: Request,
+  env: CloudflareBindings,
+) {
   const url = new URL(request.url)
   const page = parsePage(url.searchParams.get("page"))
   const search = (url.searchParams.get("q") ?? "").trim().slice(0, MAX_SEARCH_LENGTH)
   const offset = (page - 1) * PAGE_SIZE
-
   const whereClause = search
-    ? `WHERE LOWER(first_name || ' ' || last_name) LIKE ? ESCAPE '\\'
-        OR LOWER(email) LIKE ? ESCAPE '\\'
-        OR LOWER(topic) LIKE ? ESCAPE '\\'`
+    ? `AND (
+        LOWER(stm.full_name) LIKE ? ESCAPE '\\'
+        OR LOWER(stm.email) LIKE ? ESCAPE '\\'
+        OR LOWER(COALESCE(stm.stm_number, '')) LIKE ? ESCAPE '\\'
+        OR LOWER(REPLACE(stm.help_topics, '_', ' ')) LIKE ? ESCAPE '\\'
+      )`
     : ""
   const searchPattern = `%${escapeLike(search.toLowerCase())}%`
-  const searchBindings = search ? [searchPattern, searchPattern, searchPattern] : []
+  const searchBindings = search
+    ? [searchPattern, searchPattern, searchPattern, searchPattern]
+    : []
 
   const count = await env.DB.prepare(
-    `SELECT COUNT(*) AS total FROM contact ${whereClause}`
+    `SELECT COUNT(*) AS total
+    FROM form_submissions fs
+    INNER JOIN season_ticket_membership_update stm ON stm.submission_id = fs.id
+    WHERE fs.form_id = ?
+    ${whereClause}`,
   )
-    .bind(...searchBindings)
+    .bind(MEMBERSHIP_FORM_ID, ...searchBindings)
     .first<{ total: number }>()
 
   const rows = await env.DB.prepare(
     `SELECT
-      id,
-      submitted_at,
-      first_name,
-      last_name,
-      email,
-      topic,
-      email_status,
-      sync_status
-    FROM contact
+      fs.id,
+      fs.submitted_at,
+      stm.full_name,
+      stm.email,
+      stm.stm_number,
+      stm.help_topics,
+      fs.staff_notification_status AS notification_status
+    FROM form_submissions fs
+    INNER JOIN season_ticket_membership_update stm ON stm.submission_id = fs.id
+    WHERE fs.form_id = ?
     ${whereClause}
-    ORDER BY submitted_at DESC, id DESC
-    LIMIT ? OFFSET ?`
+    ORDER BY fs.submitted_at DESC, fs.id DESC
+    LIMIT ? OFFSET ?`,
   )
-    .bind(...searchBindings, PAGE_SIZE, offset)
-    .all<ContactListRow>()
+    .bind(MEMBERSHIP_FORM_ID, ...searchBindings, PAGE_SIZE, offset)
+    .all<MembershipUpdateListRow>()
 
   const total = count?.total ?? 0
 
@@ -93,36 +122,53 @@ async function listContactSubmissions(request: Request, env: CloudflareBindings)
   })
 }
 
-async function getContactSubmission(id: string, env: CloudflareBindings) {
+async function getMembershipUpdate(id: string, env: CloudflareBindings) {
   const submission = await env.DB.prepare(
     `SELECT
-      id,
-      submitted_at,
-      first_name,
-      last_name,
-      email,
-      topic,
-      message,
-      newsletter_opt_in,
-      email_status,
-      email_provider,
-      email_message_id,
-      email_error,
-      sync_status,
-      sync_provider,
-      sync_external_id,
-      sync_error,
-      protection_status
-    FROM contact
-    WHERE id = ?
-    LIMIT 1`
+      fs.id,
+      fs.submitted_at,
+      stm.full_name,
+      stm.email,
+      stm.phone,
+      stm.stm_number,
+      stm.help_topics,
+      stm.updated_email,
+      stm.updated_phone,
+      stm.updated_mailing_address,
+      stm.current_seat_count,
+      stm.requested_seat_count,
+      stm.seat_location_first_choice,
+      stm.seat_location_second_choice,
+      stm.seat_location_third_choice,
+      stm.parking_action,
+      stm.new_account_holder_name,
+      stm.new_account_holder_phone,
+      stm.new_account_holder_email,
+      stm.new_account_holder_mailing_address,
+      stm.tickets_to_transfer,
+      stm.payment_plan_action,
+      stm.credit_card_action,
+      stm.cancellation_reasons,
+      stm.cancellation_options,
+      stm.considering_cancellation_contact_method,
+      stm.cancellation_contact_method,
+      stm.cancellation_request_acknowledged,
+      stm.cancellation_written_confirmation_acknowledged,
+      stm.notes,
+      fs.staff_notification_status AS notification_status,
+      fs.staff_notification_error AS notification_error,
+      fs.protection_status
+    FROM form_submissions fs
+    INNER JOIN season_ticket_membership_update stm ON stm.submission_id = fs.id
+    WHERE fs.id = ? AND fs.form_id = ?
+    LIMIT 1`,
   )
-    .bind(id)
-    .first<ContactDetailRow>()
+    .bind(id, MEMBERSHIP_FORM_ID)
+    .first<MembershipUpdateDetailRow>()
 
   return submission
     ? json({ submission })
-    : json({ error: "Contact submission not found." }, 404)
+    : json({ error: "Membership update submission not found." }, 404)
 }
 
 async function handleApiRequest(request: Request, env: CloudflareBindings) {
@@ -138,16 +184,15 @@ async function handleApiRequest(request: Request, env: CloudflareBindings) {
   }
 
   const { pathname } = new URL(request.url)
-
-  if (pathname === "/api/forms/contact/submissions") {
-    return listContactSubmissions(request, env)
+  if (pathname === "/api/forms/membership-updates/submissions") {
+    return listMembershipUpdates(request, env)
   }
 
   const detailMatch = pathname.match(
-    /^\/api\/forms\/contact\/submissions\/([^/]+)$/
+    /^\/api\/forms\/membership-updates\/submissions\/([^/]+)$/,
   )
   if (detailMatch?.[1]) {
-    return getContactSubmission(decodeURIComponent(detailMatch[1]), env)
+    return getMembershipUpdate(decodeURIComponent(detailMatch[1]), env)
   }
 
   return json({ error: "API route not found." }, 404)
@@ -159,7 +204,7 @@ export default {
       return await handleApiRequest(request, env)
     } catch (error) {
       console.error("Wild FC Admin API request failed", error)
-      return json({ error: "Unable to load submissions." }, 500)
+      return json({ error: "Unable to load membership updates." }, 500)
     }
   },
 }

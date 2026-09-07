@@ -30,15 +30,15 @@ const navMain: NavItem[] = [
   },
   {
     title: "Forms",
-    url: "/forms/contact",
+    url: "/forms/membership-updates",
     icon: (
       <FileTextIcon
       />
     ),
     items: [
       {
-        title: "Contact",
-        url: "/forms/contact",
+        title: "Membership Updates",
+        url: "/forms/membership-updates",
       },
     ],
   },

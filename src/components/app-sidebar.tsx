@@ -4,58 +4,20 @@ import * as React from "react"
 
 import { NavMain } from "@/components/nav-main"
 import type { NavItem } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
 import {
-  GalleryVerticalEndIcon,
-  AudioLinesIcon,
-  TerminalIcon,
+  FileTextIcon,
   LayoutDashboardIcon,
-  ArrowLeftRightIcon,
-  Settings2Icon,
+  ShieldIcon,
 } from "lucide-react"
-
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: (
-        <GalleryVerticalEndIcon
-        />
-      ),
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: (
-        <AudioLinesIcon
-        />
-      ),
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: (
-        <TerminalIcon
-        />
-      ),
-      plan: "Free",
-    },
-  ],
-}
 
 const navMain: NavItem[] = [
   {
@@ -67,24 +29,16 @@ const navMain: NavItem[] = [
     ),
   },
   {
-    title: "Transactions",
-    url: "/transactions",
+    title: "Forms",
+    url: "/forms/contact",
     icon: (
-      <ArrowLeftRightIcon
-      />
-    ),
-  },
-  {
-    title: "Settings",
-    url: "/settings",
-    icon: (
-      <Settings2Icon
+      <FileTextIcon
       />
     ),
     items: [
       {
-        title: "Limits",
-        url: "/settings/limits",
+        title: "Contact",
+        url: "/forms/contact",
       },
     ],
   },
@@ -94,14 +48,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" tooltip="Wild FC Admin">
+              <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-purple-900 text-white">
+                <ShieldIcon className="size-4" />
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-semibold">Calgary Wild FC</span>
+                <span className="truncate text-xs">Admin</span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )

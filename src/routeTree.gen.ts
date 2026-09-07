@@ -14,6 +14,8 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as TransactionsRouteImport } from './routes/transactions'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as SettingsLimitsRouteImport } from './routes/settings.limits'
+import { Route as FormsContactIndexRouteImport } from './routes/forms.contact.index'
+import { Route as FormsContactSubmissionIdRouteImport } from './routes/forms.contact.$submissionId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +42,17 @@ const SettingsLimitsRoute = SettingsLimitsRouteImport.update({
   path: '/settings/limits',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FormsContactIndexRoute = FormsContactIndexRouteImport.update({
+  id: '/forms/contact/',
+  path: '/forms/contact/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FormsContactSubmissionIdRoute =
+  FormsContactSubmissionIdRouteImport.update({
+    id: '/forms/contact/$submissionId',
+    path: '/forms/contact/$submissionId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +60,8 @@ export interface FileRoutesByFullPath {
   '/transactions': typeof TransactionsRoute
   '/settings/limits': typeof SettingsLimitsRoute
   '/settings/': typeof SettingsIndexRoute
+  '/forms/contact/$submissionId': typeof FormsContactSubmissionIdRoute
+  '/forms/contact/': typeof FormsContactIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +69,8 @@ export interface FileRoutesByTo {
   '/transactions': typeof TransactionsRoute
   '/settings/limits': typeof SettingsLimitsRoute
   '/settings': typeof SettingsIndexRoute
+  '/forms/contact/$submissionId': typeof FormsContactSubmissionIdRoute
+  '/forms/contact': typeof FormsContactIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +79,28 @@ export interface FileRoutesById {
   '/transactions': typeof TransactionsRoute
   '/settings/limits': typeof SettingsLimitsRoute
   '/settings/': typeof SettingsIndexRoute
+  '/forms/contact/$submissionId': typeof FormsContactSubmissionIdRoute
+  '/forms/contact/': typeof FormsContactIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/dashboard' | '/transactions' | '/settings/limits' | '/settings/'
+    | '/'
+    | '/dashboard'
+    | '/transactions'
+    | '/settings/limits'
+    | '/settings/'
+    | '/forms/contact/$submissionId'
+    | '/forms/contact/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/transactions' | '/settings/limits' | '/settings'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/transactions'
+    | '/settings/limits'
+    | '/settings'
+    | '/forms/contact/$submissionId'
+    | '/forms/contact'
   id:
     | '__root__'
     | '/'
@@ -76,6 +108,8 @@ export interface FileRouteTypes {
     | '/transactions'
     | '/settings/limits'
     | '/settings/'
+    | '/forms/contact/$submissionId'
+    | '/forms/contact/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -84,6 +118,8 @@ export interface RootRouteChildren {
   TransactionsRoute: typeof TransactionsRoute
   SettingsLimitsRoute: typeof SettingsLimitsRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
+  FormsContactSubmissionIdRoute: typeof FormsContactSubmissionIdRoute
+  FormsContactIndexRoute: typeof FormsContactIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -123,6 +159,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsLimitsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/forms/contact/': {
+      id: '/forms/contact/'
+      path: '/forms/contact'
+      fullPath: '/forms/contact/'
+      preLoaderRoute: typeof FormsContactIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forms/contact/$submissionId': {
+      id: '/forms/contact/$submissionId'
+      path: '/forms/contact/$submissionId'
+      fullPath: '/forms/contact/$submissionId'
+      preLoaderRoute: typeof FormsContactSubmissionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -132,6 +182,8 @@ const rootRouteChildren: RootRouteChildren = {
   TransactionsRoute: TransactionsRoute,
   SettingsLimitsRoute: SettingsLimitsRoute,
   SettingsIndexRoute: SettingsIndexRoute,
+  FormsContactSubmissionIdRoute: FormsContactSubmissionIdRoute,
+  FormsContactIndexRoute: FormsContactIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,11 +1,13 @@
 {
-  "name": "app-template",
+  "name": "wild-fc-admin",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "deploy": "npm run build && wrangler deploy",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -32,6 +34,7 @@
     "zod": "^4.5.4"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.54.4",
     "@eslint/js": "^10.0.1",
     "@tanstack/router-plugin": "^1.168.35",
     "@types/node": "^24.13.3",
@@ -44,6 +47,7 @@
     "globals": "^17.11.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.67.0",
-    "vite": "^8.2.2"
+    "vite": "^8.2.2",
+    "wrangler": "^4.129.0"
   }
 }

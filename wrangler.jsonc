@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "wild-fc-admin",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-07",
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "wild-fc-forms",
+      "database_id": "e8f38a31-69a9-4666-ba97-35d1f7ba0b39",
+      "migrations_dir": "../wild-fc/migrations"
+    }
+  ]
+}

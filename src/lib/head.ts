@@ -1,4 +1,4 @@
-export const APP_NAME = "App Template"
+export const APP_NAME = "Wild FC Admin"
 
 /**
  * Builds a route's `head` payload. Titles fall back to the app name.

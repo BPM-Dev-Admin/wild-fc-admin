@@ -36,6 +36,9 @@ interface DataTableProps<TData extends RowData> {
   /** Column the toolbar's search box filters on. Omit to hide the search box. */
   filterColumnId?: string
   filterPlaceholder?: string
+  showPagination?: boolean
+  onRowClick?: (row: TData) => void
+  getRowLabel?: (row: TData) => string
 }
 
 export function DataTable<TData extends RowData>({
@@ -43,6 +46,9 @@ export function DataTable<TData extends RowData>({
   data,
   filterColumnId,
   filterPlaceholder = "Filter...",
+  showPagination = true,
+  onRowClick,
+  getRowLabel,
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -126,6 +132,20 @@ export function DataTable<TData extends RowData>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() ? "selected" : undefined}
+                  className={onRowClick ? "cursor-pointer focus-visible:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[-2px]" : undefined}
+                  role={onRowClick ? "link" : undefined}
+                  tabIndex={onRowClick ? 0 : undefined}
+                  aria-label={onRowClick && getRowLabel ? getRowLabel(row.original) : undefined}
+                  onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+                  onKeyDown={
+                    onRowClick
+                      ? (event) => {
+                          if (event.key === "Enter") {
+                            onRowClick(row.original)
+                          }
+                        }
+                      : undefined
+                  }
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -148,30 +168,32 @@ export function DataTable<TData extends RowData>({
         </Table>
       </div>
 
-      <div className="flex items-center justify-between gap-2">
-        <div className="text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+      {showPagination ? (
+        <div className="flex items-center justify-between gap-2">
+          <div className="text-sm text-muted-foreground">
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      ) : null}
     </div>
   )
 }

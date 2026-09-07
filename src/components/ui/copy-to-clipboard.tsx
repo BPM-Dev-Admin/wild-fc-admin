@@ -16,12 +16,12 @@ import type { VariantProps } from "class-variance-authority"
 interface CopyToClipboardProps
   extends Omit<
     React.ComponentProps<typeof Button>,
-    "onClick" | "children" | "size"
+    "onClick" | "children" | "size" | "variant"
   > {
   /** The value to copy to the clipboard. */
   value: string
   /** `icon` shows only the copy icon. `text` shows the icon and the label "Copy". Defaults to `icon`. */
-  variant?: "icon" | "text"
+  display?: "icon" | "text"
   /** How long the "copied" state is shown, in milliseconds. */
   resetDelay?: number
   size?: VariantProps<typeof buttonVariants>["size"]
@@ -29,7 +29,7 @@ interface CopyToClipboardProps
 
 function CopyToClipboard({
   value,
-  variant = "icon",
+  display = "icon",
   resetDelay = 1500,
   className,
   size,
@@ -55,7 +55,7 @@ function CopyToClipboard({
 
   const Icon = copied ? CheckIcon : CopyIcon
 
-  if (variant === "text") {
+  if (display === "text") {
     return (
       <Button
         type="button"

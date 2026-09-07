@@ -90,21 +90,15 @@ function DashboardPage() {
 function ComingSoonCard({ title }: { title: string }) {
   return (
     <Card
-      className="relative min-h-40 select-none bg-muted/40 text-muted-foreground shadow-none"
+      className="min-h-40 select-none bg-muted/40 text-muted-foreground shadow-none"
       aria-disabled="true"
     >
       <CardHeader>
         <CardTitle className="uppercase">{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-3xl font-semibold">—</p>
-        <p className="text-sm">Last submission: —</p>
+        <p className="text-sm">Submission dashboard coming soon.</p>
       </CardContent>
-      <div className="absolute inset-0 flex items-center justify-center bg-background/45">
-        <span className="-rotate-6 border-y border-foreground/20 bg-background/90 px-8 py-2 font-heading text-sm font-semibold tracking-[0.2em] text-foreground uppercase shadow-xs">
-          Coming Soon
-        </span>
-      </div>
     </Card>
   )
 }
